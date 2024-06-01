@@ -1,0 +1,17 @@
+<WelcomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        MDLabel:
+            text: "¡Bienvenido a la app del Betis!"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+
+        MDRaisedButton:
+            text: "Mostrar Snackbar"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.show_snackbar("¡Betis hasta la muerte!")
+
