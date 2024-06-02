@@ -1,4 +1,85 @@
+ScreenManager:
+    LoginScreen:
+    RegisterScreen:
+    WelcomeScreen:
+
+<LoginScreen>:
+    name: "login"
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        MDLabel:
+            text: "Iniciar Sesión"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+
+        MDTextField:
+            id: username
+            hint_text: "Nombre de usuario"
+            required: True
+
+        MDTextField:
+            id: password
+            hint_text: "Contraseña"
+            password: True
+            required: True
+
+        MDRaisedButton:
+            text: "Iniciar Sesión"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.login(username.text, password.text)
+            #on_release: app.root.current = "welcome"
+
+        MDTextButton:
+            text: "Crear una cuenta"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "register"
+
+<RegisterScreen>:
+    name: "register"
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        MDLabel:
+            text: "Registrar"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+
+        MDTextField:
+            id: reg_username
+            hint_text: "Nombre de usuario"
+            required: True
+
+        MDTextField:
+            id: reg_password
+            hint_text: "Contraseña"
+            password: True
+            required: True
+
+        MDTextField:
+            id: confirm_password
+            hint_text: "Confirmar Contraseña"
+            password: True
+            required: True
+
+        MDRaisedButton:
+            text: "Registrar"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.register(reg_username.text, reg_password.text, confirm_password.text)
+
+        MDTextButton:
+            text: "Ya tienes una cuenta? Inicia sesión"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "login"
+
 <WelcomeScreen>:
+    name: "welcome"
     BoxLayout:
         orientation: 'vertical'
         padding: 20
@@ -14,4 +95,3 @@
             text: "Mostrar Snackbar"
             pos_hint: {"center_x": 0.5}
             on_release: app.show_snackbar("¡Betis hasta la muerte!")
-
