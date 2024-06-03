@@ -5,22 +5,16 @@ ScreenManager:
 
 <LoginScreen>:
     name: "login"
-    canvas.before:
-        Color:
-            rgba: 212/255, 230/255, 247/255, 1  
-        Rectangle:
-            pos: self.pos
-            size: self.size
     BoxLayout:
         orientation: 'vertical'
         padding: 20
         spacing: 20
 
-        Image:
-            source: 'logo.png'
-            size_hint: (None, None)
-            size: (300, 300)
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Centering the image
+        MDLabel:
+            text: "Iniciar Sesión"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
 
         MDTextField:
             id: username
@@ -37,12 +31,12 @@ ScreenManager:
             text: "Iniciar Sesión"
             pos_hint: {"center_x": 0.5}
             on_release: app.login(username.text, password.text)
+            #on_release: app.root.current = "welcome"
 
         MDTextButton:
             text: "Crear una cuenta"
             pos_hint: {"center_x": 0.5}
             on_release: app.root.current = "register"
-
 
 <RegisterScreen>:
     name: "register"
