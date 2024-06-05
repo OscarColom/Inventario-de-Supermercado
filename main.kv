@@ -1,7 +1,37 @@
+<ScreenWithNavigation@BoxLayout>:
+    MDBottomNavigation:
+        MDBottomNavigationItem:
+            name: 'screen1'
+            text: 'Welcome'
+            icon: 'home'
+            on_tab_release: app.root.current = "welcome"
+
+        MDBottomNavigationItem:
+            name: 'screen2'
+            text: 'Mi Stock'
+            icon: 'list-box-outline'
+            on_tab_release: 
+                app.view_stock()
+                app.root.current = "view_stock"
+
+        MDBottomNavigationItem:
+            name: 'screen3'
+            text: 'Añadir Stock'
+            icon: 'plus-box'
+            on_tab_release: app.root.current = "add_stock"
+
+        MDBottomNavigationItem:
+            name: 'screen4'
+            text: 'Pantalla 4'
+            icon: 'help'
+            on_tab_release: app.root.current = self.name
+
 ScreenManager:
     LoginScreen:
     RegisterScreen:
     WelcomeScreen:
+    AddStockScreen:
+    ViewStockScreen:
 
 <LoginScreen>:
     name: "login"
@@ -15,6 +45,11 @@ ScreenManager:
         orientation: 'vertical'
         padding: 20
         spacing: 20
+        Image:
+            source: 'logo.png'
+            size_hint: (None, None)
+            size: (300, 300)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Centering the image
 
         Image:
             source: 'logo.png'
@@ -85,18 +120,93 @@ ScreenManager:
 
 <WelcomeScreen>:
     name: "welcome"
+    ScreenWithNavigation:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 100]
+        spacing: 20
+        MDLabel:
+            text: "¡Bienvenido a Your Stock Manager!"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+        Image:
+            source: 'logo.png'
+            size_hint: (None, None)
+            size: (300, 300)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Centering the image
+        #MDRaisedButton:
+            #text: "Mostrar Snackbar"
+            #pos_hint: {"center_x": 0.5}
+            #on_release: app.show_snackbar("¡Betis hasta la muerte!")
+
+        MDRaisedButton:
+            text: "Cerrar Sesión"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.logout()
+
+        # MDRaisedButton:
+        #     text: "Añadir Stock"
+        #     pos_hint: {"center_x": 0.5}
+        #     on_release: app.root.current = "add_stock"
+
+        # MDRaisedButton:
+        #     text: "Ver Stock"
+        #     pos_hint: {"center_x": 0.5}
+        #     on_release: 
+        #         app.view_stock()
+        #         app.root.current = "view_stock"
+
+<AddStockScreen>:
+    name: "add_stock"
+    ScreenWithNavigation:
     BoxLayout:
         orientation: 'vertical'
         padding: 20
         spacing: 20
 
         MDLabel:
-            text: "¡Bienvenido a la app del Betis!"
+            text: "Añadir Stock"
             halign: 'center'
             theme_text_color: "Primary"
             font_style: "H5"
 
+        MDTextField:
+            id: item_name
+            hint_text: "Nombre del producto"
+            required: True
+
+        MDTextField:
+            id: item_quantity
+            hint_text: "Cantidad"
+            required: True
+
         MDRaisedButton:
-            text: "Mostrar Snackbar"
+            text: "Añadir"
             pos_hint: {"center_x": 0.5}
-            on_release: app.show_snackbar("¡Betis hasta la muerte!")
+            on_release: app.add_stock(item_name.text, item_quantity.text)
+        
+        BoxLayout:
+            size_hint_y: 0.3
+
+<ViewStockScreen>:
+    name: "view_stock"
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        MDLabel:
+            text: "Ver Stock"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+
+        ScrollView:
+            MDList:
+                id: stock_list
+
+        MDTextButton:
+            text: "Volver"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "welcome"
