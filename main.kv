@@ -33,6 +33,7 @@ ScreenManager:
     AddStockScreen:
     ViewStockScreen:
     NotificationManagementScreen:
+    RemoveStockScreen:
 
 <LoginScreen>:
     name: "login"
@@ -119,7 +120,7 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         padding: [20, 100]
-        spacing: 20
+        spacing: 35
         MDLabel:
             text: "¡Bienvenido a Your Stock Manager!"
             halign: 'center'
@@ -132,9 +133,19 @@ ScreenManager:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
         MDRaisedButton:
+            text: "Quitar Stock"
+            pos_hint: {"center_x": 0.5}
+            md_bg_color: 1, 1, 0, 1 # Cambiar el color del botón
+            text_color: 0, 0, 0, 1
+            on_release: 
+                app.show_remove_stock()
+                app.root.current = "remove_stock"
+
+        MDRaisedButton:
             text: "Cerrar Sesión"
             pos_hint: {"center_x": 0.5}
             on_release: app.logout()
+
 
 <AddStockScreen>:
     name: "add_stock"
@@ -177,6 +188,28 @@ ScreenManager:
 
         MDLabel:
             text: "Ver Stock"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+
+        ScrollView:
+            MDList:
+                id: stock_list
+
+        MDTextButton:
+            text: "Volver"
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "welcome"
+
+<RemoveStockScreen>:
+    name: "remove_stock"
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        MDLabel:
+            text: "Quitar Stock"
             halign: 'center'
             theme_text_color: "Primary"
             font_style: "H5"

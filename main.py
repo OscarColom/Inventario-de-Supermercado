@@ -8,6 +8,7 @@ from kivy.uix.screenmanager import Screen
 from kivymd.uix.snackbar import Snackbar
 from kivy.metrics import dp
 from kivymd.uix.list import OneLineListItem
+from functools import partial
 
 Window.size = (350, 500)
 
@@ -49,6 +50,9 @@ class ViewStockScreen(Screen):
     pass
 
 class NotificationManagementScreen(Screen):
+    pass
+
+class RemoveStockScreen(Screen):
     pass
 
 class MyApp(MDApp):
@@ -176,6 +180,30 @@ class MyApp(MDApp):
                 size_hint_x=(Window.width - dp(20)) / Window.width
             )
             snackbar.open()
+
+    def show_remove_stock(self):
+        self.update_remove_stock_list()
+
+    def update_remove_stock_list(self):
+        screen = self.root.get_screen('remove_stock')
+        stock_list = screen.ids.stock_list
+        stock_list.clear_widgets()
+
+        for item_name, item_quantity in self.stock.items():
+            stock_list.add_widget(
+                OneLineListItem(text=f"{item_name}: {item_quantity}", on_release=partial(self.remove_stock_item, item_name))
+            )
+
+    def remove_stock_item(self, item_name, *args):
+        if item_name in self.stock:
+            self.stock[item_name] -= 1
+            if self.stock[item_name] <= 0:
+                del self.stock[item_name]
+            self.save_stock()
+            self.update_remove_stock_list()
+            self.show_snackbar(f"Se ha restado 1 unidad de {item_name}. Nuevo stock: {self.stock.get(item_name, 0)}")
+        else:
+            self.show_snackbar("Error: El elemento no existe en el stock")
 
 if __name__ == '__main__':
     MyApp().run()
