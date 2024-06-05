@@ -1,20 +1,37 @@
+import threading
+import telebot
+import json
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import Screen
 from kivymd.uix.snackbar import Snackbar
 from kivy.metrics import dp
-from kivymd.uix.list import OneLineListItem  # Importa OneLineListItem
-import json  
-import urllib.request
-import openai
-import os
+from kivymd.uix.list import OneLineListItem
 
 Window.size = (350, 500)
 
 # Definimos los nombres de los archivos JSON
 USERS_FILE = 'users.json'
 STOCK_FILE = 'stock.json'
+
+# Telegram bot token
+TELEGRAM_BOT_TOKEN = '7223540096:AAEFZvr_UypvTA8UlgFT4vhA7TVBZDBmn5c'
+bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
+
+class TelegramNotifier(threading.Thread):
+    def __init__(self):
+        super(TelegramNotifier, self).__init__()
+        self.daemon = True  # Set the thread as daemon
+
+    def run(self):
+        @bot.message_handler(commands=['start', 'help'])
+        def send_welcome(message):
+            chat_id = message.chat.id
+            bot.reply_to(message, f"Hello! Your chat ID is {chat_id}")
+
+        bot.polling()
+
 
 class LoginScreen(Screen):
     pass
@@ -31,7 +48,13 @@ class AddStockScreen(Screen):
 class ViewStockScreen(Screen):
     pass
 
+class NotificationManagementScreen(Screen):
+    pass
+
 class MyApp(MDApp):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.show_snackbar_flag = True  # Flag to control Snackbar display
 
     def build(self):
         self.title = "Inventario de Supermercado"
@@ -40,6 +63,9 @@ class MyApp(MDApp):
     def on_start(self):
         self.load_users()
         self.load_stock()
+        # Start the Telegram notifier thread
+        notifier_thread = TelegramNotifier()
+        notifier_thread.start()
 
     def load_users(self):
         try:
@@ -91,10 +117,12 @@ class MyApp(MDApp):
             return
 
         self.root.current = 'welcome'
+        self.show_snackbar_flag = False  # Suppress Snackbar
         self.show_snackbar(f"Bienvenido, {username}")
 
     def logout(self):
         self.root.current = 'login'
+        self.show_snackbar_flag = False  # Suppress Snackbar
         self.show_snackbar("Sesión cerrada")
 
     def add_stock(self, item_name, item_quantity):
@@ -109,6 +137,7 @@ class MyApp(MDApp):
 
         self.save_stock()
         self.root.current = 'welcome'
+        self.show_snackbar_flag = False  # Suppress Snackbar
         self.show_snackbar(f"Stock añadido: {item_name} - {item_quantity}")
 
     def view_stock(self):
@@ -120,14 +149,33 @@ class MyApp(MDApp):
                 OneLineListItem(text=f"{item_name}: {item_quantity}")
             )
 
+    def send_id(self):
+        # This method is now running on a separate thread, no changes needed.
+        pass
+
+    def send_notification(self):
+        chat_id = self.root.get_screen('notification_management').ids.chat_id.text
+
+        if not chat_id:
+            self.show_snackbar("Por favor, ingrese el ID del chat")
+            return
+
+        stock_message = "Current stock:\n"
+        for item_name, item_quantity in self.stock.items():
+            stock_message += f"{item_name}: {item_quantity}\n"
+
+        bot.send_message(chat_id, stock_message)
+        self.show_snackbar("Notificación enviada con éxito")
+
     def show_snackbar(self, text):
-        snackbar = Snackbar(
-            text,
-            snackbar_x=dp(10),
-            snackbar_y=dp(10),
-            size_hint_x=(Window.width - dp(20)) / Window.width
-        )
-        snackbar.open()
+        if self.show_snackbar_flag:
+            snackbar = Snackbar(
+                text,
+                snackbar_x=dp(10),
+                snackbar_y=dp(10),
+                size_hint_x=(Window.width - dp(20)) / Window.width
+            )
+            snackbar.open()
 
 if __name__ == '__main__':
     MyApp().run()

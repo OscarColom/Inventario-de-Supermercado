@@ -22,9 +22,9 @@
 
         MDBottomNavigationItem:
             name: 'screen4'
-            text: 'Pantalla 4'
-            icon: 'help'
-            on_tab_release: app.root.current = self.name
+            text: 'Notificiaciones'
+            icon: 'bell'
+            on_tab_release: app.root.current = "notification_management"
 
 ScreenManager:
     LoginScreen:
@@ -32,6 +32,7 @@ ScreenManager:
     WelcomeScreen:
     AddStockScreen:
     ViewStockScreen:
+    NotificationManagementScreen:
 
 <LoginScreen>:
     name: "login"
@@ -49,13 +50,7 @@ ScreenManager:
             source: 'logo.png'
             size_hint: (None, None)
             size: (300, 300)
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Centering the image
-
-        Image:
-            source: 'logo.png'
-            size_hint: (None, None)
-            size: (300, 300)
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Centering the image
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
         MDTextField:
             id: username
@@ -134,28 +129,12 @@ ScreenManager:
             source: 'logo.png'
             size_hint: (None, None)
             size: (300, 300)
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}  # Centering the image
-        #MDRaisedButton:
-            #text: "Mostrar Snackbar"
-            #pos_hint: {"center_x": 0.5}
-            #on_release: app.show_snackbar("¡Betis hasta la muerte!")
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
         MDRaisedButton:
             text: "Cerrar Sesión"
             pos_hint: {"center_x": 0.5}
             on_release: app.logout()
-
-        # MDRaisedButton:
-        #     text: "Añadir Stock"
-        #     pos_hint: {"center_x": 0.5}
-        #     on_release: app.root.current = "add_stock"
-
-        # MDRaisedButton:
-        #     text: "Ver Stock"
-        #     pos_hint: {"center_x": 0.5}
-        #     on_release: 
-        #         app.view_stock()
-        #         app.root.current = "view_stock"
 
 <AddStockScreen>:
     name: "add_stock"
@@ -210,3 +189,47 @@ ScreenManager:
             text: "Volver"
             pos_hint: {"center_x": 0.5}
             on_release: app.root.current = "welcome"
+
+<NotificationManagementScreen>:
+    name: "notification_management"
+    ScreenWithNavigation:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 100]  # Adjusted padding here
+        spacing: 20
+
+        MDLabel:
+            text: "Notificaciones"
+            halign: 'center'
+            theme_text_color: "Primary"
+            font_style: "H5"
+
+        MDLabel:
+            text: "Envia /start o /help en Telegram chat para obtener chat ID."
+            halign: 'center'
+            theme_text_color: "Secondary"
+
+        Widget:
+            size_hint_y: 0.1
+
+        MDRaisedButton:
+            text: "Enviar ID"
+            size_hint: (None, None)
+            size: (200, 50)
+            pos_hint: {"center_x": 0.5}
+            on_release: app.send_id()
+
+        Widget:
+            size_hint_y: 0.1
+
+        MDTextField:
+            id: chat_id
+            hint_text: "Introduce el Chat ID"
+            required: True
+
+        MDRaisedButton:
+            text: "Enviar Stock"
+            size_hint: (None, None)
+            size: (200, 50)
+            pos_hint: {"center_x": 0.5}
+            on_release: app.send_notification()
